@@ -17,7 +17,7 @@ func main() {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	wh, _ := tgbotapi.NewWebhookWithCert("https://"+os.Getenv("HOST")+":443/"+bot.Token, tgbotapi.FilePath("./cert/cert.pem"))
+	wh, _ := tgbotapi.NewWebhookWithCert("https://"+os.Getenv("HOST")+":8443/"+bot.Token, tgbotapi.FilePath("./cert/cert.pem"))
 
 	_, err = bot.Request(wh)
 	if err != nil {
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServeTLS("0.0.0.0:443", "./cert/cert.pem", "./cert/key.pem", nil)
+	go http.ListenAndServeTLS("0.0.0.0:8443", "./cert/cert.pem", "./cert/key.pem", nil)
 
 	for update := range updates {
 		log.Printf("%+v\n", update)
