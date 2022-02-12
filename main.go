@@ -42,7 +42,7 @@ func main() {
 
 	// create a custom server with `TLSConfig`
 	s := &http.Server{
-		Addr:    ":8443",
+		Addr:    ":443",
 		Handler: nil, // use `http.DefaultServeMux`
 		TLSConfig: &tls.Config{
 			Certificates: []tls.Certificate{cert},
