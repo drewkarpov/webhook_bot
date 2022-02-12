@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/tls"
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"net/http"
@@ -34,7 +36,25 @@ func main() {
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServeTLS("0.0.0.0:8443", "./cert/cert.pem", "./cert/key.pem", nil)
+
+	// generate a `Certificate` struct
+	cert, _ := tls.LoadX509KeyPair("./cert/cert.pem", "./cert/key.pem")
+
+	// create a custom server with `TLSConfig`
+	s := &http.Server{
+		Addr:    ":8443",
+		Handler: nil, // use `http.DefaultServeMux`
+		TLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		},
+	}
+
+	// handle `/` route
+	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(res, "Hello Custom World!")
+	})
+
+	go s.ListenAndServeTLS("", "")
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
