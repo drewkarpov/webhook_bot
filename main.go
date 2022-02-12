@@ -57,6 +57,7 @@ func main() {
 	go s.ListenAndServeTLS("", "")
 
 	for update := range updates {
+		log.Printf("%+v\n", update)
 		if update.Message != nil { // If we got a message
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
