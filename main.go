@@ -34,7 +34,7 @@ func main() {
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServeTLS("127.0.0.1:8443", "./cert/cert.pem", "./cert/key.pem", nil)
+	go http.ListenAndServeTLS("0.0.0.0:8443", "./cert/cert.pem", "./cert/key.pem", nil)
 
 	for update := range updates {
 		if update.Message != nil { // If we got a message
