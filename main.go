@@ -17,7 +17,7 @@ func main() {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	wh, _ := tgbotapi.NewWebhook("https://" + os.Getenv("HOST") + ":8443/" + bot.Token)
+	wh, _ := tgbotapi.NewWebhook("https://" + os.Getenv("HOST") + ":443/" + bot.Token)
 
 	_, err = bot.Request(wh)
 	if err != nil {
@@ -34,7 +34,13 @@ func main() {
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServe(":8443", nil)
+	http.HandleFunc("/greeting", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+	})
+
+	go http.ListenAndServe(":443", nil)
 
 	for update := range updates {
 		log.Printf("%+v\n", update)
