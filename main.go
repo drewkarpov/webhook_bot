@@ -32,8 +32,17 @@ func main() {
 	if info.LastErrorDate != 0 {
 		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
 	}
+	ch := make(chan tgbotapi.UpdatesChannel, bot.Buffer)
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
+
+	if len(updates) == 0 {
+		go func() {
+			u := tgbotapi.NewUpdate(0)
+			u.Timeout = 60
+			ch <- bot.GetUpdatesChan(u)
+		}()
+	}
 	http.HandleFunc("/greeting", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Set("Content-Type", "application/json")
@@ -42,7 +51,7 @@ func main() {
 
 	go http.ListenAndServe(":3000", nil)
 
-	for update := range updates {
+	for update := range <-ch {
 		log.Printf("%+v\n", update)
 		if update.Message != nil { // If we got a message
 			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
