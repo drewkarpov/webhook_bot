@@ -17,7 +17,7 @@ func main() {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	wh, _ := tgbotapi.NewWebhook("https://" + os.Getenv("HOST") + ":5000/" + bot.Token)
+	wh, _ := tgbotapi.NewWebhook("https://" + os.Getenv("HOST") + ":8443/" + bot.Token)
 
 	_, err = bot.Request(wh)
 	if err != nil {
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServe(":5000", nil)
+	go http.ListenAndServe(":8443", nil)
 
 	for update := range updates {
 		log.Printf("%+v\n", update)
